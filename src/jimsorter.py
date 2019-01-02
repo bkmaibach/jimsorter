@@ -3,8 +3,8 @@ import os
 import shutil
 import errno
 
-inpath = "/media/root/ECB25C41B25C1306/jims_pics"
-outpath = "/media/root/ECB25C41B25C1306/jim_sorted"
+inpath = "/home/maibes/Desktop/Pictures"
+outpath = "/home/maibes/Desktop/Pictures_Sorted"
 
 def list_files(dir):
     r = []
@@ -29,11 +29,28 @@ for tuple in list_files(inpath):
     for filename in tuple[2]:
         filepath = tuple[0] + "/" + filename
         f = open(filepath, 'rb')
-        datetimetag = str(exifread.process_file(f, details=False).get('EXIF DateTimeDigitized', "Undated"))
+
+        tags = exifread.process_file(f, details=False)
+
+        # for tag in tags.keys():
+        #     if tag not in ('JPEGThumbnail', 'TIFFThumbnail', 'Filename', 'EXIF MakerNote'):
+        #         print("Key: %s, value %s" % (tag, tags[tag]))
+
+        # for tag in tags.keys():
+        #     if tag in ('EXIF DateTimeDigitized', 'Image DateTime'):
+        #         print("Key: %s, value: %s" % (tag, tags[tag]))
+
+
+
+        datetimetag = str(tags.get('Image DateTime', "Undated"))
+        # datetimetag = str(exifread.process_file(f, details=False).get('EXIF DateTimeDigitized', "Undated")) 
+        # print(datetimetag)
+
         if not datetimetag.startswith("2"):
             datetimetag = "Undated"
-        print(datetimetag)
+
         destfolder = datetimetag[:7].replace(":", "-")
+        print(destfolder)
         make_sure_path_exists(outpath + "/" + destfolder)
         if filename.startswith('email'):
             destpath = outpath + "/" + destfolder + "/" + filename.replace("email", "photo")
